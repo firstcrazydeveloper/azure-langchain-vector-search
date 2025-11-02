@@ -1,0 +1,43 @@
+# docker-compose.yml
+name: azure-langchain-vector-search
+
+services:
+  vector-pipeline:
+    build: .
+    container_name: vector-pipeline
+    # Automatically loads variables from .env
+    env_file:
+      - .env
+    # Helpful when you're iterating on code locally
+    volumes:
+      - ./:/app
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    # Clear host proxy vars for this container unless you set them explicitly
+    environment:
+      - HTTP_PROXY=
+      - HTTPS_PROXY=
+      - NO_PROXY=localhost,127.0.0.1
+    command: >
+      uvicorn src.query_api:app
+      --host 0.0.0.0
+      --port 8080
+      --timeout-keep-alive 120
+      --log-level info
+    restart: unless-stopped
+    healthcheck:
+      # Use Python stdlib to probe /healthz (no curl/wget required)
+      test: >
+        python -c "import urllib.request,sys;
+        urllib.request.urlopen('http://localhost:8080/healthz',timeout=10);
+        print('OK')"
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+    # Keep logs manageable on long runs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -1,0 +1,17 @@
+# 1) Provision (prints and writes provision-output.json)
+.\scripts\00-Provision.ps1 -ResourceGroup rg-vector-pipeline -Location westeurope
+
+# 2) Create .env (point it at your AOAI embedding deployment name)
+.\scripts\01-CreateEnv.ps1 -EmbeddingDeployment text-embedding-3-small
+
+# 3) Upload sample docs
+.\scripts\02-UploadSamples.ps1
+
+# 4) Bring up API (Docker)
+.\scripts\03-DockerUp.ps1
+
+# 5) Ingest into Azure Search (clear → load → OCR → chunk → embed → archive → index)
+.\scripts\04-Ingest.ps1
+
+# 6) Query
+.\scripts\05-Query.ps1 -Query "vendor contract termination" -K 5

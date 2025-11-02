@@ -1,0 +1,5 @@
+Security Guidelines
+
+1. All passwords must be rotated every 90 days.
+2. Two-factor authentication is mandatory for all admin users.
+3. Access to confidential data must be logged and reviewed weekly.
