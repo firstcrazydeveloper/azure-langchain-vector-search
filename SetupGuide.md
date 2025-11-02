@@ -149,9 +149,9 @@ This clears the index, loads files, runs OCR, generates embeddings, and uploads 
 Expected log:
 
 ```
-Clearing indexâ€¦
+Clearing index...
 Found 4 blobs to ingest
-Embedding 12 chunksâ€¦
+Embedding 12 chunks...
 Archived embeddings to /embeddings-archive/parquet/...
 Ingestion complete.
 ```
@@ -238,10 +238,10 @@ Validates OCR, chunking, embeddings, and index creation.
 
 | Query | Expected Document |
 |--------|-------------------|
-| â€œtermination clause europeâ€ | `sample.pdf` |
-| â€œdata retention policyâ€ | `sample.docx` |
-| â€œtwo factor admin securityâ€ | `sample.txt` |
-| â€œcancel agreementâ€ | `sample.png` (OCR) |
+| “termination clause europe” | `sample.pdf` |
+| “data retention policy” | `sample.docx` |
+| “two factor admin security”| `sample.txt` |
+| “cancel agreement” | `sample.png` (OCR) |
 
 ---
 
