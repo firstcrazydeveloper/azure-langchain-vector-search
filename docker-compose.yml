@@ -18,6 +18,7 @@ services:
       - HTTP_PROXY=
       - HTTPS_PROXY=
       - NO_PROXY=localhost,127.0.0.1
+      - PYTHONPATH=/app
     command: >
       uvicorn src.query_api:app
       --host 0.0.0.0

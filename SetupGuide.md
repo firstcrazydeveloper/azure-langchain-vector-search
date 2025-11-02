@@ -100,6 +100,9 @@ Create test files under `tests/data/`:
 | `sample.docx` | Data retention policy |
 | `sample.txt` | Security guidelines |
 | `sample.png` | OCR test image |
+| `sample.csv` | Product dataset |
+| `sample.xlsx` | Policy register for compliance |
+
 
 Upload them to Blob:
 

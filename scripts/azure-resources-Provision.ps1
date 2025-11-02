@@ -1,49 +1,48 @@
-param(
-  [string]$ResourceGroup = "rg-vector-pipeline",
-  [string]$Location = "westeurope",
-  [string]$StorageName = ("stvec{0}" -f (Get-Random)),
-  [string]$SearchName = ("searchvec{0}" -f (Get-Random)),
-  [string]$AoaiName = ("aoaivec{0}" -f (Get-Random)),
-  [string]$Container = "documents"
-)
+$ResourceGroup = "simaira-rg-vector-pipeline-test"
+$Location = "eastus"
 
-Write-Host "Creating resource group..." -ForegroundColor Cyan
 az group create -n $ResourceGroup -l $Location | Out-Null
 
-Write-Host "Creating Storage account: $StorageName" -ForegroundColor Cyan
-az storage account create -g $ResourceGroup -n $StorageName -l $Location --sku Standard_LRS | Out-Null
-$StorageConn = az storage account show-connection-string -g $ResourceGroup -n $StorageName -o tsv
-az storage container create --name $Container --connection-string $StorageConn | Out-Null
+Write-Host "Deploying Bicep..." -ForegroundColor Cyan
 
-Write-Host "Creating Cognitive Search: $SearchName" -ForegroundColor Cyan
-az search service create --name $SearchName -g $ResourceGroup --sku Basic --location $Location | Out-Null
-$SearchKey = az search admin-key show -n $SearchName -g $ResourceGroup --query primaryKey -o tsv
-$SearchEndpoint = "https://$SearchName.search.windows.net"
+$OutputsJson  = az deployment group create `
+  -g $ResourceGroup `
+  -f ./provision.bicep `
+  -p location=$Location `
+  --query properties.outputs `
+  -o json
 
-Write-Host "Creating Azure OpenAI: $AoaiName" -ForegroundColor Cyan
-az cognitiveservices account create `
-  -g $ResourceGroup -n $AoaiName -l $Location `
-  --kind OpenAI --sku S0 --yes | Out-Null
+$Outputs = $OutputsJson | ConvertFrom-Json
+Write-Host "Bicep deployed..." -ForegroundColor Green
 
-$AoaiKey = az cognitiveservices account keys list -g $ResourceGroup -n $AoaiName --query key1 -o tsv
-$AoaiEndpoint = az cognitiveservices account show -g $ResourceGroup -n $AoaiName --query properties.endpoint -o tsv
+# 2) Extract values we need from outputs
+$searchName = $Outputs.searchServiceName.value
+$aoaiName   = $Outputs.openAiName.value
 
-Write-Host "Deploy an embeddings model in Azure OpenAI Studio and note the deployment name (e.g., text-embedding-3-small)." -ForegroundColor Yellow
+# 3) Fetch keys (post-deploy, via CLI)
+Write-Host "Fetching API keys..." -ForegroundColor Cyan
+$SearchKey = az search admin-key show -g $ResourceGroup -n $searchName --query primaryKey -o tsv
+$AoaiKey   = az cognitiveservices account keys list -g $ResourceGroup -n $aoaiName --query key1 -o tsv
+Write-Host "Got API keys..." -ForegroundColor Green
 
-# Output a JSON you can feed next script
-$Out = [pscustomobject]@{
-  ResourceGroup      = $ResourceGroup
-  Location           = $Location
-  StorageAccount     = $StorageName
-  StorageConnection  = $StorageConn
-  BlobContainer      = $Container
-  SearchName         = $SearchName
-  SearchEndpoint     = $SearchEndpoint
-  SearchAdminKey     = $SearchKey
-  AoaiName           = $AoaiName
-  AoaiEndpoint       = $AoaiEndpoint
-  AoaiKey            = $AoaiKey
+# 4) Build a flat object with all values + keys
+Write-Host "Building output file ..." -ForegroundColor Cyan
+$Out = [ordered]@{
+  ResourceGroup     = $ResourceGroup
+  Location          = $Outputs.location.value
+  StorageAccount    = $Outputs.storageAccountName.value
+  BlobContainer     = $Outputs.blobContainerName.value
+  StorageConnectionString = $Outputs.storageConnectionString.value
+  SearchName        = $searchName
+  SearchEndpoint    = $Outputs.searchEndpoint.value
+  SearchAdminKey    = $SearchKey
+  AoaiName          = $aoaiName
+  AoaiEndpoint      = $Outputs.openAiEndpoint.value
+  AoaiKey           = $AoaiKey
 }
-$Out | ConvertTo-Json -Depth 5 | Set-Content -Path ./provision-output.json -Encoding UTF8
 
-Write-Host "`nProvision complete. See provision-output.json." -ForegroundColor Green
+$File = "./provision-output.json"
+($Out | ConvertTo-Json -Depth 5) | Set-Content -Path $File -Encoding UTF8
+Write-Host "Created output file ..." -ForegroundColor Green
+
+Write-Host "`n✅ Deployment complete. Outputs saved to $File" -ForegroundColor Green

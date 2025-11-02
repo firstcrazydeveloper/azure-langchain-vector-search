@@ -1,36 +1,42 @@
-from langchain_community.document_loaders import PyPDFLoader, TextLoader
-import docx2txt, tempfile, os
-from .ocr import image_to_text
+# src/loaders.py
+import io, os
+import pandas as pd
+from langchain.document_loaders import PyPDFLoader, UnstructuredWordDocumentLoader, TextLoader
+from PIL import Image
+import pytesseract
 
-def load_pdf_bytes(b: bytes, name: str):
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as f:
-        f.write(b); path = f.name
-    docs = PyPDFLoader(path).load()
-    for d in docs:
-        d.metadata["source"] = name
-    os.unlink(path)
+def load_document(file_path: str):
+    ext = os.path.splitext(file_path.lower())[1]
+    docs = []
+
+    if ext == ".pdf":
+        loader = PyPDFLoader(file_path)
+        docs = loader.load()
+
+    elif ext in [".docx", ".doc"]:
+        loader = UnstructuredWordDocumentLoader(file_path)
+        docs = loader.load()
+
+    elif ext in [".txt", ".log"]:
+        loader = TextLoader(file_path, encoding="utf-8")
+        docs = loader.load()
+
+    elif ext in [".png", ".jpg", ".jpeg"]:
+        # OCR for image files
+        text = pytesseract.image_to_string(Image.open(file_path))
+        docs = [{"page_content": text, "metadata": {"source": file_path, "type": "image"}}]
+
+    elif ext == ".csv":
+        df = pd.read_csv(file_path)
+        text = df.to_string(index=False)
+        docs = [{"page_content": text, "metadata": {"source": file_path, "type": "csv"}}]
+
+    elif ext in [".xls", ".xlsx"]:
+        df = pd.read_excel(file_path)
+        text = df.to_string(index=False)
+        docs = [{"page_content": text, "metadata": {"source": file_path, "type": "excel"}}]
+
+    else:
+        print(f"⚠️ Unsupported file type: {ext}")
+
     return docs
-
-def load_docx_bytes(b: bytes, name: str):
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as f:
-        f.write(b); path = f.name
-    text = docx2txt.process(path) or ""
-    os.unlink(path)
-    return [{"page_content": text, "metadata": {"source": name, "type":"docx"}}]
-
-def load_txt_bytes(b: bytes, name: str):
-    text = b.decode("utf-8", errors="ignore")
-    return [{"page_content": text, "metadata": {"source": name, "type":"txt"}}]
-
-def load_image_bytes(b: bytes, name: str):
-    text = image_to_text(b)
-    return [{"page_content": text, "metadata": {"source": name, "type":"image-ocr"}}]
-
-def load_by_extension(b: bytes, name: str):
-    ext = name.lower().split(".")[-1]
-    if ext == "pdf": return load_pdf_bytes(b, name)
-    if ext in ["docx", "doc"]: return load_docx_bytes(b, name)
-    if ext in ["txt", "md"]: return load_txt_bytes(b, name)
-    if ext in ["png", "jpg", "jpeg", "tif", "tiff"]: return load_image_bytes(b, name)
-    # fallback try as text
-    return load_txt_bytes(b, name)
