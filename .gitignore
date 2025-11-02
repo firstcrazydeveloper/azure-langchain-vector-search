@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/scripts/.env
+/scripts/provision-output.json
+/src/__pycache__
+/.env
