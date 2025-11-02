@@ -61,7 +61,7 @@ This writes a file **`provision-output.json`** containing all endpoints and keys
 
 ---
 
-## ðŸ” Step 3 â€” Create the `.env` Configuration
+## 🔐 Step 3 - Create the `.env` Configuration
 
 Generate environment variables automatically:
 
@@ -90,7 +90,7 @@ APP_PORT=8080
 
 ---
 
-## ðŸ“„ Step 4 â€” Prepare and Upload Test Files
+## 📄 Step 4 - Prepare and Upload Test Files
 
 Create test files under `tests/data/`:
 
@@ -118,7 +118,7 @@ Uploading tests\data\sample.png -> images/clause.png
 
 ---
 
-## ðŸ§± Step 5 â€” Build and Run the Docker Container
+## 🧱 Step 5 - Build and Run the Docker Container
 
 ```powershell
 .\scripts-DockerUp.ps1
@@ -138,7 +138,7 @@ Output:
 
 ---
 
-## ðŸ§  Step 6 â€” Run the Ingestion Process
+## 🧠  Step 6 - Run the Ingestion Process
 
 This clears the index, loads files, runs OCR, generates embeddings, and uploads vectors to Cognitive Search.
 
@@ -158,7 +158,7 @@ Ingestion complete.
 
 ---
 
-## ðŸ” Step 7 â€” Run Semantic Search Queries
+## 🔍 Step 7 - Run Semantic Search Queries
 
 ```powershell
 .\scripts-Query.ps1 -Query "termination clause europe" -K 3
@@ -182,7 +182,7 @@ Example output:
 
 ---
 
-## ðŸ§¾ Step 8 â€” Verify Vector Archive in Blob
+## 🧾 Step 8 - Verify Vector Archive in Blob
 
 Each ingestion stores Parquet + NPZ snapshots under:
 ```
@@ -201,7 +201,7 @@ PY
 
 ---
 
-## ðŸ§ª Step 9 â€” Run Tests
+## 🧪 Step 9 - Run Tests
 
 ```powershell
 docker compose exec vector-pipeline pytest -q
@@ -211,7 +211,7 @@ Validates OCR, chunking, embeddings, and index creation.
 
 ---
 
-## ðŸ§± Step 10 â€” Useful PowerShell Commands
+## 🧱 Step 10 - Useful PowerShell Commands
 
 | Action | Command |
 |--------|----------|
@@ -222,7 +222,7 @@ Validates OCR, chunking, embeddings, and index creation.
 
 ---
 
-## ðŸ§° Troubleshooting
+## 🧰 Troubleshooting
 
 | Problem | Cause | Fix |
 |----------|--------|-----|
@@ -234,7 +234,7 @@ Validates OCR, chunking, embeddings, and index creation.
 
 ---
 
-## ðŸ§  Validation Queries
+## 🧠 Validation Queries
 
 | Query | Expected Document |
 |--------|-------------------|
@@ -245,7 +245,7 @@ Validates OCR, chunking, embeddings, and index creation.
 
 ---
 
-## ðŸ”’ Security Notes
+## 🔒 Security Notes
 
 - Use **Managed Identity** for production  
 - Enable **Private Endpoints** + **VNet Integration**  
@@ -254,7 +254,7 @@ Validates OCR, chunking, embeddings, and index creation.
 
 ---
 
-## ðŸŽ¯ Next Steps
+## 🎯 Next Steps
 
 - Add **RAG (Retrieval-Augmented Generation)**  
 - Deploy to **Azure App Service** or **Container Apps**  
@@ -263,10 +263,11 @@ Validates OCR, chunking, embeddings, and index creation.
 
 ---
 
-## ðŸ‘¨â€ðŸ’» Author
+## 👨‍💻 Author
 
 **Abhishek Kumar**  
-ðŸŒ [GitHub](https://github.com/firstcrazydeveloper)â€ƒðŸ”— [LinkedIn](https://www.linkedin.com/in/firstcrazydeveloper)
+🌐 [GitHub](https://github.com/firstcrazydeveloper)
+🔗— [LinkedIn](https://www.linkedin.com/in/firstcrazydeveloper)
 
 > Building intelligent, context-aware enterprise systems using Azure + AI  
 
