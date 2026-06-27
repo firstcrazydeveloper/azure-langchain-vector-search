@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <TestRunParameters>
+    <Parameter name="ApiBaseUrl" value="http://localhost:8080" />
+  </TestRunParameters>
+  <NUnit>
+    <WorkDirectory>TestResults</WorkDirectory>
+    <ThrowOnEachFailure>false</ThrowOnEachFailure>
+    <DefaultTimeout>60000</DefaultTimeout>
+    <NumberOfTestWorkers>1</NumberOfTestWorkers>
+  </NUnit>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

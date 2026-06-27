@@ -1,0 +1,22 @@
+{
+  "$schema": "https://specflow.org/specflow-default.json",
+  "language": {
+    "feature": "en"
+  },
+  "bindingCulture": {
+    "name": "en-US"
+  },
+  "generator": {
+    "allowDebugGeneratedFiles": false,
+    "allowRowTests": true
+  },
+  "runtime": {
+    "missingOrPendingStepsOutcome": "Error"
+  },
+  "trace": {
+    "traceSuccessfulSteps": true,
+    "traceTimings": false,
+    "minTracedDuration": "0:0:0.1",
+    "listener": "SpecFlow.Tracing.DefaultListener, SpecFlow"
+  }
+}
