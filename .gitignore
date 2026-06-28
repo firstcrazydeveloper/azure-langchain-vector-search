@@ -8,3 +8,6 @@
 /src/__pycache__
 /.env
 /tests/__pycache__
+__pycache__/
+*.pyc
+*.pyo
