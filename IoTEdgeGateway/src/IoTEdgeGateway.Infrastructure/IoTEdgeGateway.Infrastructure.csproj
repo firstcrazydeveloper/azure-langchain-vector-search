@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>IoTEdgeGateway.Infrastructure</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTEdgeGateway.Domain\IoTEdgeGateway.Domain.csproj" />
+    <ProjectReference Include="..\IoTEdgeGateway.Application\IoTEdgeGateway.Application.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- MQTT -->
+    <PackageReference Include="MQTTnet" Version="4.3.7.1207" />
+    <!-- OPC UA -->
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" Version="1.5.374.126" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" Version="1.5.374.126" />
+    <!-- Modbus TCP -->
+    <PackageReference Include="NModbus" Version="3.0.81" />
+    <!-- Azure IoT Edge -->
+    <PackageReference Include="Microsoft.Azure.Devices.Client" Version="1.42.3" />
+    <!-- Extensions -->
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+  </ItemGroup>
+</Project>

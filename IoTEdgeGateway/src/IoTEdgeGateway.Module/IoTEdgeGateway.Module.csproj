@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>IoTEdgeGateway.Module</RootNamespace>
+    <AssemblyName>IoTEdgeGateway.Module</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTEdgeGateway.Domain\IoTEdgeGateway.Domain.csproj" />
+    <ProjectReference Include="..\IoTEdgeGateway.Application\IoTEdgeGateway.Application.csproj" />
+    <ProjectReference Include="..\IoTEdgeGateway.Infrastructure\IoTEdgeGateway.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>
