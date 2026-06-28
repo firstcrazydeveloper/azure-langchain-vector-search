@@ -1,0 +1,17 @@
+# IoT Edge Gateway dependencies
+# Core
+pydantic>=2.0,<3.0
+pydantic-settings>=2.0,<3.0
+
+# Protocol adapters
+paho-mqtt>=1.6,<3.0
+asyncua>=0.9,<2.0
+pymodbus>=3.5,<4.0
+
+# Azure IoT Hub SDK
+azure-iot-device>=2.12,<3.0
+
+# Testing
+pytest>=7.0
+pytest-asyncio>=0.21
+pytest-mock>=3.0

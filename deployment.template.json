@@ -1,0 +1,139 @@
+{
+  "$schema-template": "2.0.0",
+  "modulesContent": {
+    "$edgeAgent": {
+      "properties.desired": {
+        "schemaVersion": "1.1",
+        "runtime": {
+          "type": "docker",
+          "settings": {
+            "minDockerVersion": "v1.25",
+            "loggingOptions": "",
+            "registryCredentials": {}
+          }
+        },
+        "systemModules": {
+          "edgeAgent": {
+            "type": "docker",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-agent:1.4",
+              "createOptions": {}
+            }
+          },
+          "edgeHub": {
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-hub:1.4",
+              "createOptions": {
+                "HostConfig": {
+                  "PortBindings": {
+                    "5671/tcp": [{"HostPort": "5671"}],
+                    "8883/tcp": [{"HostPort": "8883"}],
+                    "443/tcp": [{"HostPort": "443"}]
+                  }
+                }
+              }
+            },
+            "env": {
+              "OptimizeForPerformance": {"value": "true"},
+              "experimentalFeatures__enabled": {"value": "true"},
+              "experimentalFeatures__mqttBrokerEnabled": {"value": "false"}
+            }
+          }
+        },
+        "modules": {
+          "iot-edge-gateway": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "startupOrder": 1,
+            "settings": {
+              "image": "${MODULES.iot-edge-gateway}",
+              "createOptions": {
+                "HostConfig": {
+                  "NetworkMode": "host",
+                  "Binds": [
+                    "/tmp/iot_edge_gateway:/tmp/iot_edge_gateway"
+                  ]
+                }
+              }
+            },
+            "env": {
+              "GATEWAY_GATEWAY_ID": {"value": "edge-gateway-01"},
+              "GATEWAY_TELEMETRY_BATCH_SIZE": {"value": "50"},
+              "GATEWAY_TELEMETRY_BATCH_INTERVAL_SECONDS": {"value": "5"},
+              "GATEWAY_ALERT_COOLDOWN_SECONDS": {"value": "60"},
+              "GATEWAY_ENABLE_MQTT": {"value": "true"},
+              "GATEWAY_ENABLE_OPCUA": {"value": "false"},
+              "GATEWAY_ENABLE_MODBUS": {"value": "true"},
+              "GATEWAY_DEADBAND_PERCENT": {"value": "0.5"},
+              "MQTT_BROKER_HOST": {"value": "localhost"},
+              "MQTT_BROKER_PORT": {"value": "1883"},
+              "MQTT_QOS": {"value": "1"},
+              "MQTT_TOPICS": {"value": "[\"devices/#\"]"},
+              "MODBUS_HOST": {"value": "192.168.1.100"},
+              "MODBUS_PORT": {"value": "502"},
+              "MODBUS_UNIT_ID": {"value": "1"},
+              "MODBUS_HOLDING_REGISTER_ADDRESSES": {"value": "[40001, 40002, 40003]"},
+              "MODBUS_POLL_INTERVAL_SECONDS": {"value": "1.0"},
+              "VALIDATION_THRESHOLDS_JSON": {
+                "value": "[{\"tag_name\":\"holding_40001\",\"min_value\":0,\"max_value\":150,\"critical_max\":145,\"stale_threshold_seconds\":30},{\"tag_name\":\"holding_40002\",\"min_value\":0,\"max_value\":10,\"critical_max\":9.5}]"
+              }
+            }
+          }
+        }
+      }
+    },
+    "$edgeHub": {
+      "properties.desired": {
+        "schemaVersion": "1.2",
+        "routes": {
+          "gatewayToHub": "FROM /messages/modules/iot-edge-gateway/* INTO $upstream",
+          "hubToGateway": "FROM $upstream INTO BrokeredEndpoint(\"/modules/iot-edge-gateway/inputs/commands\")"
+        },
+        "storeAndForwardConfiguration": {
+          "timeToLiveSecs": 7200
+        }
+      }
+    },
+    "iot-edge-gateway": {
+      "properties.desired": {
+        "schemaVersion": "1.0",
+        "translationRules": [
+          {
+            "tagPattern": "holding_40001",
+            "scale": 0.036630,
+            "offset": 0,
+            "unit": "°C",
+            "deviceName": "Furnace-PLC",
+            "clampMin": 0,
+            "clampMax": 150
+          },
+          {
+            "tagPattern": "holding_40002",
+            "scale": 0.002442,
+            "offset": 0,
+            "unit": "bar",
+            "deviceName": "Furnace-PLC",
+            "clampMin": 0,
+            "clampMax": 10
+          }
+        ],
+        "filterRules": [
+          {
+            "tagPattern": "holding_*",
+            "deadbandPercent": 0.5,
+            "minSendIntervalSeconds": 2.0
+          },
+          {
+            "tagPattern": "devices/*/diagnostics/*",
+            "important": false
+          }
+        ]
+      }
+    }
+  }
+}
